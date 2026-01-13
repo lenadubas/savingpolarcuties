@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Niedźwiedzie Polarne – Edukacja i Ochrona</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Lora:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-cold: #0b2545; 
+            --secondary-ice: #f0f4f8;
+            --accent-orange: #ff8c00; 
+            --white-trans: rgba(255, 255, 255, 0.96);
+            --text-main: #1d2d35;
+            --ice-blue: #4fc3f7;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background: linear-gradient(rgba(230, 240, 250, 0.8), rgba(230, 240, 250, 0.8)), 
+                        url('https://images.unsplash.com/photo-1589656966895-2f33e7653819?auto=format&fit=crop&w=1920&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* DYNAMIKA I PŁYNNE PRZEJŚCIA */
+        .fade-in { 
+            opacity: 0; 
+            transform: translateY(50px) scale(0.95); 
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1); 
+        }
+        .fade-in.visible { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+        }
+
+        header {
+            background-color: var(--primary-cold);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        .stats-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 900px;
+            margin: 40px auto 0;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transform: translateZ(0);
+        }
+
+        .stat-val { font-size: 3rem; font-weight: 700; color: var(--ice-blue); text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+
+        /* TERMOMETRY - DESIGN */
+        .weather-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .thermometer-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .thermometer-card:hover { transform: translateY(-10px); }
+
+        .mercury-track {
+            width: 24px;
+            height: 180px;
+            background: #eee;
+            border-radius: 12px;
+            margin: 20px auto;
+            position: relative;
+            border: 2px solid #ddd;
+        }
+
+        .mercury-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to top, #0277bd, #ff5252);
+            height: 0%;
+            transition: height 2.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            border-radius: 10px;
+        }
+
+        /* TREŚĆ I KARTY */
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        .card { 
+            background: var(--white-trans); 
+            padding: 50px; 
+            border-radius: 24px; 
+            margin-bottom: 60px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        h2 { font-family: 'Lora', serif; font-size: 2.2rem; color: var(--primary-cold); margin-bottom: 25px; }
+
+        .main-img { 
+            width: 100%; 
+            border-radius: 15px; 
+            margin: 30px 0; 
+            transition: transform 0.5s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .main-img:hover { transform: scale(1.02); }
+
+        /* QUIZ */
+        .quiz-section { 
+            background: var(--primary-cold); 
+            color: white; 
+            text-align: center; 
+            padding: 80px 40px; 
+            border-radius: 24px; 
+            margin: 80px 0; 
+            border: 6px solid var(--accent-orange);
+            box-shadow: 0 30px 60px rgba(11, 37, 69, 0.4);
+        }
+
+        .btn-quiz { 
+            background: var(--accent-orange); 
+            color: white; 
+            padding: 25px 60px; 
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            border-radius: 60px; 
+            text-decoration: none; 
+            display: inline-block; 
+            margin-top: 30px; 
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.4);
+            animation: pulse-glow 2s infinite;
+        }
+        .btn-quiz:hover { transform: scale(1.1); filter: brightness(1.1); }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 140, 0, 0.7); }
+            70% { box-shadow: 0 0 0 30px rgba(255, 140, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 140, 0, 0); }
+        }
+
+        /* SKLEP */
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .product { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 20px; 
+            text-align: center; 
+            transition: 0.4s;
+            border: 1px solid #eee;
+        }
+        .product:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+
+        #cart-container { 
+            background: #fff8f1; 
+            border: 5px solid var(--accent-orange); 
+            padding: 40px; 
+            border-radius: 24px; 
+            margin-top: 50px; 
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        footer { background: #051221; color: #cfd8dc; padding: 100px 20px; }
+        .org-card { 
+            background: rgba(255,255,255,0.03); 
+            padding: 30px; 
+            border-radius: 15px; 
+            border-left: 5px solid var(--ice-blue);
+            transition: 0.3s;
+        }
+        .org-card:hover { background: rgba(255,255,255,0.08); }
+
+        .btn-pay {
+            background: var(--primary-cold);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-pay:hover { background: var(--accent-orange); }
+
+        .progress-fill { height: 100%; background: var(--ice-blue); transition: width 0.5s; }
+        .progress-bar-wrap { background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; margin: 20px 0; overflow: hidden; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="fade-in">
+        <h1 style="font-size: 3.5rem; margin-bottom: 10px;">Niedźwiedzie Polarne</h1>
+        <p style="font-size: 1.2rem; opacity: 0.9;">Ochrona Ekosystemu Arktyki w Czasie Rzeczywistym</p>
+        
+        <div class="stats-box">
+            <div class="stat-grid" style="display: flex; justify-content: space-around; align-items: center;">
+                <div class="stat-item">
+                    <span class="stat-lbl" style="display:block; font-size: 0.8rem;">WIZYTY</span>
+                    <span class="stat-val" id="visit-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-lbl" style="display:block; font-size: 0.8rem;">FUNDUSZ POMOCY</span>
+                    <span class="stat-val" id="donation-total">12 450 PLN</span>
+                </div>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-fill" id="progress-fill" style="width: 20%"></div></div>
+            <div class="quick-donate">
+                <button class="btn-pay" onclick="fastPay(5)">+5 PLN</button>
+                <button class="btn-pay" onclick="fastPay(15)">+15 PLN</button>
+                <button class="btn-pay" onclick="fastPay(50)">+50 PLN</button>
+                <button class="btn-pay" onclick="customPay()" style="background: #555;">INNA KWOTA</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+    <section class="card fade-in">
+        <h2>Mapa Arktyki</h2>
+        <p>Obszar monitorowania i siedliska niedźwiedzi polarnych.</p>
+        
+        <img src="https://geology.com/world/arctic-ocean-map.gif" class="main-img" alt="Mapa Arktyki" style="max-width: 600px; display: block; margin: 0 auto;">
+    </section>
+
+    <section class="card fade-in">
+        <h2>Monitoring Klimatyczny Live</h2>
+        <p>Weryfikacja warunków pogodowych: Ny-Ålesund (Baza Arktyczna) vs Polska.</p>
+        <div class="weather-section">
+            <div class="thermometer-card">
+                <center><strong>Arktyka (Ny-Ålesund)</strong></center>
+                <div class="temp-display" id="temp-arctic" style="color: #0277bd; text-align: center; font-size: 2rem; margin-top: 10px;">--°C</div>
+                <div class="mercury-track"><div class="mercury-fill" id="fill-arctic"></div></div>
+            </div>
+            <div class="thermometer-card">
+                <center><strong>Warszawa</strong></center>
+                <div class="temp-display" id="temp-warsaw" style="text-align: center; font-size: 2rem; margin-top: 10px;">--°C</div>
+                <div class="mercury-track"><div class="mercury-fill" id="fill-warsaw"></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card fade-in">
+        <h2>Misja Kampanii</h2>
+        <p>Celem naszej kampanii jest zwiększenie świadomości społecznej dotyczącej sytuacji niedźwiedzi polarnych oraz zebranie środków finansowych na ochronę i monitoring ich siedlisk oraz populacji, realizowane zarówno poprzez wsparcie organizacji ekologicznych, jak i utworzenie funduszu edukacyjno-informacyjnego.</p>
+        
+        <img src="https://images.unsplash.com/photo-1589656966895-2f33e7653819?auto=format&fit=crop&w=1200&q=80" class="main-img" alt="Niedźwiedź polarny">
+        
+        <p>Cel ten jest istotny, ponieważ według danych naukowych na świecie żyje obecnie zaledwie około 22–31 tysięcy niedźwiedzi polarnych, a niektóre populacje zmniejszyły się o blisko 50% w ciągu ostatnich 40 lat (np. populacja w Zatoce Hudsona). Prognozy wskazują, że przy utrzymaniu obecnego tempa ocieplenia do 2050 roku może zniknąć ponad 2/3 populacji.</p>
+    </section>
+
+    <section class="card fade-in">
+        <h2>Wpływ Zmian Klimatu</h2>
+        <p>Topniejący lód morski, spowodowany zmianami klimatu, ogranicza polowania niedźwiedzi polarnych na foki, ich główne źródło pożywienia. Lód jest niezbędny jako platforma łowiecka i miejsce odpoczynku. Skutkiem jego zaniku są spadek masy ciała, obniżona płodność i mniejsza przeżywalność młodych, co prowadzi do spadku populacji.</p>
+        <p>Zbierane środki i kampanie zwiększające świadomość pomagają chronić siedliska, finansować badania i projekty ochrony gatunku oraz wspierać działania na rzecz ograniczenia skutków zmian klimatu.</p>
+        
+        <p>Globalne ocieplenie powoduje zmiany w całym łańcuchu pokarmowym, co bezpośrednio wpływa na możliwość przetrwania niedźwiedzi. Zwierzęta te są ważnym ogniwem ekosystemu – ich zniknięcie mogłoby zaburzyć równowagę biologiczną całego regionu polarnego.</p>
+        
+        <p>Jednym z głównych powodów zagrożenia niedźwiedzi polarnych jest degradacja środowiska spowodowana działalnością człowieka. Zanieczyszczenie mórz, obecność plastiku w wodzie oraz rosnąca temperatura planety prowadzą do zaniku pokrywy lodowej.</p>
+    </section>
+
+    <section class="quiz-section fade-in">
+        <h2 style="color:white; border:none;">Sprawdź swój wpływ na klimat</h2>
+        <p style="font-size: 1.3rem;">Czy wiesz jak twoje codzienne czynności wpływają na klimat?</p>
+        <a href="https://lenadubas.github.io/quiz-ekologiczny/quiz_ekologiczny.html" target="_blank" class="btn-quiz">WEŹ UDZIAŁ W QUIZIE</a>
+    </section>
+
+    <section class="card fade-in">
+        <h2>Wsparcie przez Edukację</h2>
+        <div class="shop-grid">
+            <div class="product"><span class="product-emoji" style="font-size:5rem;">🐻‍❄️</span><h3>Brelok Niedźwiedź Polarny</h3><p>30 PLN</p><button class="btn-pay" onclick="addToCart('Niedźwiedź Polarny', 30)">Dodaj do koszyka</button></div>
+            <div class="product"><span class="product-emoji" style="font-size:5rem;">🦭</span><h3>Brelok Foka Obrączkowana</h3><p>25 PLN</p><button class="btn-pay" onclick="addToCart('Foka Obrączkowana', 25)">Dodaj do koszyka</button></div>
+            <div class="product"><span class="product-emoji" style="font-size:5rem;">🐧</span><h3>Brelok Pingwin</h3><p>20 PLN</p><button class="btn-pay" onclick="addToCart('Pingwin', 20)">Dodaj do koszyka</button></div>
+        </div>
+        <div id="cart-container">
+            <h3>🛒 Twój Wybór (Makieta):</h3>
+            <div id="cart-items" style="margin-bottom: 20px;"></div>
+            <div style="text-align: right; border-top: 2px solid var(--accent-orange); padding-top: 20px;">
+                <span style="font-size: 1.8rem; font-weight: bold;">RAZEM: <span id="cart-sum">0</span> PLN</span><br><br>
+                <button class="btn-quiz" style="font-size: 1.2rem; padding: 15px 40px;" onclick="checkout()">SFINALIZUJ I WPŁAĆ</button>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <div class="container" style="margin-top:0;">
+        <div class="org-list">
+            <div class="org-card">
+                <strong>Polar Bears International</strong>
+                <p>Kluczowa organizacja skupiona wyłącznie na niedźwiedziach polarnych i lodzie morskim.</p>
+                <a href="https://polarbearsinternational.org" target="_blank">Odwiedź Portal →</a>
+            </div>
+            <div class="org-card" style="margin-top:20px;">
+                <strong>WWF Arctic</strong>
+                <p>Globalna inicjatywa na rzecz ochrony różnorodności biologicznej w regionach polarnych.</p>
+                <a href="https://www.worldwildlife.org" target="_blank">Odwiedź Portal →</a>
+            </div>
+            <div class="org-card" style="margin-top:20px;">
+                <strong>Protect The Arctic</strong>
+                <p>Niezależna organizacja walcząca z wydobyciem ropy w arktycznych rezerwatach.</p>
+                <a href="https://www.protectthearctic.org" target="_blank">Odwiedź Portal →</a>
+            </div>
+            <div class="org-card" style="margin-top:20px;">
+                <strong>Greenpeace</strong>
+                <p>Radykalne działania na rzecz ochrony klimatu i powstrzymania ocieplenia oceanów.</p>
+                <a href="https://www.greenpeace.org" target="_blank">Odwiedź Portal →</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 1. POGODA - LOSOWA DLA ARKTYKI
+    async function getWeather() {
+        // Losowa temperatura Arktyki (-28 do -7)
+        let arcticTemp = Math.floor(Math.random() * ((-7) - (-28) + 1)) + (-28);
+        document.getElementById('temp-arctic').innerText = arcticTemp + "°C";
+        let hA = ((arcticTemp + 40) / 80) * 100;
+        document.getElementById('fill-arctic').style.height = hA + "%";
+
+        // Realna Warszawa
+        try {
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=52.23&longitude=21.01&current_weather=true`);
+            const data = await res.json();
+            let temp = data.current_weather.temperature;
+            document.getElementById('temp-warsaw').innerText = temp + "°C";
+            let hW = ((temp + 40) / 80) * 100;
+            document.getElementById('fill-warsaw').style.height = Math.max(0, Math.min(100, hW)) + "%";
+        } catch (e) { document.getElementById('temp-warsaw').innerText = "8°C"; }
+    }
+
+    // 2. STATYSTYKI I FUNDUSZ (Z PAMIĘCIĄ)
+    let visits = localStorage.getItem('v_polar') || 0;
+    localStorage.setItem('v_polar', ++visits);
+    document.getElementById('visit-count').innerText = visits;
+
+    let funds = parseInt(localStorage.getItem('f_polar_fund')) || 12450;
+
+    function upd() {
+        document.getElementById('donation-total').innerText = funds.toLocaleString() + " PLN";
+        document.getElementById('progress-fill').style.width = Math.min((funds/50000)*100, 100) + "%";
+        localStorage.setItem('f_polar_fund', funds);
+    }
+
+    function fastPay(n) { funds += n; upd(); }
+    
+    function customPay() {
+        let val = prompt("Podaj kwotę wpłaty (PLN):", "100");
+        let num = parseInt(val);
+        if(!isNaN(num) && num > 0) {
+            funds += num;
+            upd();
+        }
+    }
+
+    // 3. KOSZYK
+    let cart = [];
+    function addToCart(n, p) {
+        cart.push({n, p});
+        document.getElementById('cart-container').style.display = 'block';
+        let s = 0;
+        const div = document.getElementById('cart-items');
+        div.innerHTML = '';
+        cart.forEach(i => { s+=i.p; div.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;"><span>${i.n}</span><strong>${i.p} PLN</strong></div>`; });
+        document.getElementById('cart-sum').innerText = s;
+        document.getElementById('cart-container').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function checkout() {
+        funds += parseInt(document.getElementById('cart-sum').innerText);
+        cart = []; upd();
+        document.getElementById('cart-container').style.display = 'none';
+        alert("Wspaniale! Twój symboliczny datek zasilił licznik makiety.");
+        window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    // 4. ANIMACJE
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    window.onload = () => { upd(); getWeather(); };
+</script>
+
+</body>
+</html>
